@@ -1,22 +1,6 @@
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.name) {
-        errors.name = 'Обязательное поле!';
-
-    }else if (values.name.lenght < 2){
-        errors.name = 'миниммум 2 символа для заполнения'
-    }
-    if (!values.email) {
-        errors.email =  'Обязательное поле!';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9._%-]+[A-Z]{2,}$/i.test(values.email)){
-        errors.email = 'неправильный email адрес';
-    }
-
-    return errors;
-}
 
 const Form = () => {
 
@@ -29,7 +13,14 @@ const Form = () => {
             text: '',
             terms: false
         },
-        validate,
+        validationSchema: Yup.object({
+            name: Yup.string()
+                    .min(2, 'минимум 2 символа!')
+                    .required('Обязательное поле'),
+            email: Yup.string()
+                    .email('Неправильный email адрес')
+                    .required('Обязательное поле')
+        }),
         onSubmit: values => console.log(JSON.stringify(values, null, 2))
     })
     
