@@ -1,9 +1,39 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, useField } from 'formik';
 import * as Yup from 'yup';
 
 
+const MyTextInput = ({label, ...props}) => {
+    const [field, meta] = useField(props);
+    return (
+        <>
+            <label htmlFor={props.name}>{label}</label>
+            <input {...props} {...field} />
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </>
+    )
+};
+
+const MyCheckBox = ({children, ...props}) => {
+    const [field, meta] = useField({...props, type: 'checkbox'});
+    return (
+        <>
+            <label className="checkbox">
+                <input type="checkbox" {...props} {...field} />
+                {children}
+            </label>
+
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </>
+    )
+};
+
 const CustomForm = () => {
     
+
     return (
         <Formik
             initialValues = {{
@@ -14,6 +44,7 @@ const CustomForm = () => {
                 text: '',
                 terms: false
             }}
+
             validationSchema = {Yup.object({
                 name: Yup.string()
                         .min(2, 'минимум 2 символа!')
@@ -35,20 +66,18 @@ const CustomForm = () => {
         >
             <Form className="form">
                 <h2>Отправить пожертвование</h2>
-                <label htmlFor="name">Ваше имя</label>
-                <Field
+                <MyTextInput
+                    label="Ваше имя"
                     id="name"
                     name="name"
                     type="text"
                 />
-                <ErrorMessage className = "error" name="name" component="div"/>
-                <label htmlFor="email">Ваша почта</label>
-                <Field
+                <MyTextInput
+                    label="Ваша почта"
                     id="email"
                     name="email"
                     type="email"
                 />
-                <ErrorMessage className = "error" name="email" component="div"/>
                 <label htmlFor="amount">Количество</label>
                 <Field
                     id="amount"
@@ -74,14 +103,10 @@ const CustomForm = () => {
                     as="textarea"
                 />
                 <ErrorMessage className = "error" name="text" component="div"/>
-                <label className="checkbox">
-                    <Field 
-                        name="terms" 
-                        type="checkbox" 
-                        />
-                    Соглашаетесь с политикой конфиденциальности?
-                </label>
-                <ErrorMessage className = "error" name="terms" component="div"/>
+                <MyCheckBox
+                    name="terms"> 
+                        Соглашаетесь с политикой конфиденциальности?
+                </MyCheckBox>
                 <button type="submit">Отправить</button>
             </Form>
         </Formik>
